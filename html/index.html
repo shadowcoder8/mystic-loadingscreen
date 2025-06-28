@@ -1,79 +1,88 @@
-<!--
-/*=================================================================*\
-/* By: 			|	Nevera Development  							|
-/* FiveM: 		|	https://forum.cfx.re/u/neveradevelopment		|
-/* Discord: 	|	https://discord.gg/NeveraDev/tw28AqrgWU  		|
-/*=================================================================*/
-/* If you have any problems you can contact us via discord. <3     */
--->
-
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<link rel="stylesheet" type="text/css" href="assets/css/style.css">
-	<script type="text/javascript" src="assets/js/jquery.min.js"></script>
-	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-	<script src="http://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
-
-	<title>Nevera - Loading Screen</title>
-	<script src="config.js"></script>
-
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Loading Screen</title> <!-- Title will be configurable -->
+    <link rel="stylesheet" type="text/css" href="assets/css/style.css">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <!-- Config -->
+    <script src="config.js"></script>
+    <!-- Particles.js (conditionally loaded/initialized via JS based on config) -->
+    <script src="http://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js" defer></script>
 </head>
 <body>
-	<div id="particles-js"></div>
-	<div class="winter"></div>
-	<div class="mini-buttons">
-		<button onclick="toggleMute(this)"><i class="bi bi-volume-up"></i></button>
-		<button onclick="togglePause(this)"><i class="bi bi-pause"></i></button>
-		<div class="inpt">
-			<input type="range" min="0" max="100" step="1" value="100" class="volume-slider" oninput="setVolume(this.value)">
-			<span>100%</span>
-		</div>
-	</div>
+    <!-- Background Elements -->
+    <div id="background-container">
+        <div id="particles-js"></div> <!-- For particle effects -->
+        <video id="local-video-bg" autoplay loop muted playsinline class="hidden"></video>
+        <div id="youtube-video-bg">
+            <!-- The iframe will be created here by JS if youtube background is selected -->
+        </div>
+        <!-- Gradient/Static Image background will be controlled by CSS on body or a dedicated div -->
+    </div>
 
-	<iframe allow="autoplay; encrypted-media" id="youtube-video"></iframe>
+    <!-- Main Content Area -->
+    <main class="loading-screen-content">
+        <header class="server-header">
+            <img src="" alt="Server Logo" id="server-logo" class="hidden"> <!-- Actual src from config -->
+            <h1 id="server-name">Server Name</h1> <!-- Actual name from config -->
+            <p id="server-description">Server description.</p> <!-- Actual desc from config -->
+        </header>
 
-	<div class="panel left staffteam" style="display:none;">
-		<h3>Staff Team</h3>
-		<div class="list staff_team"></div>
-	</div>
+        <section class="info-panels">
+            <aside class="panel staff-panel hidden">
+                <h3>Staff Team</h3>
+                <div class="list staff-list"></div>
+            </aside>
+            <aside class="panel player-list-panel hidden">
+                <h3>Players Online</h3>
+                <div class="list player-list"></div>
+                <p id="player-count">Players: 0/0</p>
+            </aside>
+        </section>
 
-	<div class="panel right playerlist" style="display:none">
-		<h3>Players</h3>
-		<div class="list player_list"></div>
-	</div>
+        <section class="messages-area">
+            <div id="tips-messages" class="hidden">
+                <p>Tip/Message will appear here.</p>
+            </div>
+            <div id="changelog-feed" class="hidden">
+                <h4>Changelog</h4>
+                <ul id="changelog-list"></ul>
+            </div>
+        </section>
 
-	<div class="center">
-		<h1><strong>NEV</strong>ERA</h1>
-		<p>Role<b>play</b></p>
-		<span>FiveM Roleplay server featuring an extensive collection of custom scripts, maps, vehicles, unique weapons, and much more.</span>
-		<ul class="social">
-			<li class="discord" style="display:none;"><a href="/"><i class="bi bi-discord"></i></a></li>
-			<li class="instagram" style="display:none;"><a href="/"><i class="bi bi-instagram"></i></a></li>
-			<li class="youtube" style="display:none;"><a href="/"><i class="bi bi-youtube"></i></a></li>
-			<li class="twitter" style="display:none;"><a href="/"><i class="bi bi-twitter"></i></a></li>
+        <ul class="social-links">
+            <!-- Social links will be populated by JS based on config -->
+            <!-- Example: <li class="social-discord hidden"><a href="#" target="_blank" aria-label="Discord"><i class="bi bi-discord"></i></a></li> -->
+        </ul>
+    </main>
 
-			<li class="tiktok" style="display:none;"><a href="/"><i class="bi bi-tiktok"></i></a></li>
-			<li class="facebook" style="display:none;"><a href="/"><i class="bi bi-facebook"></i></a></li>
-			<li class="twitch" style="display:none;"><a href="/"><i class="bi bi-twitch"></i></a></li>
-			<li class="github" style="display:none;"><a href="/"><i class="bi bi-github"></i></a></li>
+    <footer class="controls-footer">
+        <div class="progress-container">
+            <p id="loading-progress-text">0%</p>
+            <div class="progress-bar">
+                <div class="progress-bar-inner"></div>
+            </div>
+        </div>
 
+        <div class="media-controls">
+            <button id="mute-button" aria-label="Mute/Unmute Music"><i class="bi bi-volume-up"></i></button>
+            <button id="pause-button" aria-label="Pause/Play Music"><i class="bi bi-pause"></i></button>
+            <div class="volume-control">
+                <input type="range" min="0" max="100" step="1" value="100" id="volume-slider" aria-labelledby="volume-percentage">
+                <span id="volume-percentage">100%</span>
+            </div>
+        </div>
+        <div class="theme-toggle">
+            <button id="theme-toggle-button" aria-label="Toggle Dark/Light Mode"><i class="bi bi-moon-stars-fill"></i></button> <!-- Icon changes with theme -->
+        </div>
+    </footer>
 
-
-
-		</ul>
-	</div>
-	<div class="loading-bar">
-		<p>0%</p>
-		<div class="bar">
-			<div class="line"></div>
-		</div>
-	</div>
-	<div class="loading"></div>
-
-<script type="text/javascript" src="assets/js/script.js"></script>
-<script src="https://www.youtube.com/iframe_api"></script>
+    <!-- Scripts -->
+    <!-- The old script.js will be heavily refactored or rewritten -->
+    <script type="text/javascript" src="assets/js/script.js" defer></script>
+    <!-- YouTube IFrame API will be loaded dynamically by script.js if needed -->
 </body>
 </html>
